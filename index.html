@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="https://unpkg.com/d3-v6-tip@1.0.6/build/d3-v6-tip.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    ></script>
+
+  </head>
+
+  <body>
+    <nav>
+      <h1>Zaposlenost Republike Hrvatske</h1>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <div id="map"></div>
+        </div>
+        <div class="col" id="map-filters">
+          <div class="row">
+            <h5>Filter podataka</h5>
+            <input
+            type="range"
+            min="1998"
+            max="2020"
+            class="form-range"
+            id="myRange"
+            />
+            <label for="customRange1" class="form-label"
+              >Odabrana godina za prikaz podataka:
+              <span id="selectedYear"></span
+            ></label>
+            <select
+              class="form-select"
+              onchange="changeSector()"
+              id="sectorSelector"
+            >
+              <option value="0" selected>
+                Aktivno stanovnistvo prema administrativnim izvorima
+              </option>
+              <option value="1">
+                Ukupno zaposleni prema administrativnim izvorima
+              </option>
+              <option value="2">
+                Aktivni osiguranici-individualni poljoprivrednici
+              </option>
+              <option value="3">
+                Zaposleni u obrtu i slobodnim profesijama
+              </option>
+              <option value="4">Zaposleni u pravnim osobama</option>
+              <option value="5">Registrirana nezaposlenost</option>
+              <option value="6">Stopa registrirane nezaposlenosti</option>
+              <!-- <option value="7">Neto place</option> -->
+            </select>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col">
+              <h5>Usporedite 2 zupanije</h5>
+              <div class="row">
+                <div class="col">
+                  <p class="text-center">Prva zupanija: <span id="firstChosenCounty" style="font-weight: bold; color: red;"></span></p>
+                </div>
+                <div class="col">
+                  <p class="text-center">Druga zupanija: <span id="secondChosenCounty" style="font-weight: bold; color: blue;"></span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col d-flex justify-content-center" id="lineChart">
+  
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    
+    <script type="module" src="visualizations.js"></script>
+  </body>
+</html>

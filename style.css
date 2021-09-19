@@ -1,0 +1,106 @@
+body {
+    margin: 0;
+}
+
+nav {
+    background-color: black;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+
+nav h1 {
+    height: 30px;
+    line-height: 30px;
+    margin: 0;
+}
+
+#map-filters h5{
+  text-align: center;
+}
+
+#nameOfCounty {
+  text-align: center;
+}
+
+#countySectorValue {
+  margin-left: 30%;
+}
+
+.card{
+  border-radius: 7%;
+  line-height: 1.5;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+.tip {
+  background-color: #367588;
+
+  padding: 10px;
+  text-align: center;
+}
+/* 
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 60px;
+  min-height: 28px;
+  padding: 8px 12px;
+  font: 12px sans-serif;
+  background: lightgray;
+  border: 0px;
+  border-radius: 8px;
+  pointer-events: none;
+} */
+
+/* #map {
+  width: max-content;
+} */
+
+/* .slidecontainer {
+    width: 100%;
+  }
+  
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 25px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+  
+  .slider:hover {
+    opacity: 1;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #04AA6D;
+    cursor: pointer;
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: #04AA6D;
+    cursor: pointer;
+  } */
+  .axis {
+    font: 10px sans-serif;
+  }
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+  
