@@ -84,22 +84,14 @@ function initVisualizations() {
   createLineChart();
 }
 
-function updateVisualizations() {
-  resolveGeoData();
-}
 
 slider.oninput = function () {
   output.innerHTML = this.value;
   year = slider.value;
-  updateVisualizations();
+  resolveGeoData();
 };
 
-function refreshVisualizations() {
-  d3.select("body").selectAll("svg").remove();
-  findSectorMaxValue();
-  createMap();
-  createLineChart();
-}
+
 
 function createMap() {
   var projection = d3.geo
@@ -166,6 +158,7 @@ function handeClick(d) {
       countiesToCompare[1] = d.properties.gn_name;
       secondChosenCountyHolder.text(d.properties.gn_name);
       comparisonCounter++;
+      updateLineChart();
     }
   }
   chosenCounty = d.properties.gn_name;
@@ -181,7 +174,6 @@ function handleHover(i, d) {
     return `${stateInfo.name} <br> ${stateInfo.value}  `;
   });
   tip.show(i, d.target);
-  //console.log(i);
 }
 
 function handleHoverOut(d) {
@@ -207,7 +199,8 @@ function changeSector() {
   countyValueHolder.text(dataArray[chosenSector][0].data[year - 1998]);
   nameOfCountyHolder.text("Republika Hrvatska");
   findSectorMaxValue();
-  updateVisualizations();
+  resolveGeoData();
+  updateLineChart();
 }
 
 function findSectorMaxValue() {
@@ -249,13 +242,17 @@ function findMaxValueForStateComparison() {
   const secondState = dataArray[chosenSector].find(
     (el) => el.county == countiesToCompare[1]
   );
-  return;
-  Math.max.apply(Math, firstState.data) < Math.max.apply(Math, secondState.data)
-    ? Math.max.apply(Math, secondState.data)
-    : Math.max.apply(Math, firstState.data);
+
+  const max = Math.max.apply(Math, firstState.data) < Math.max.apply(Math, secondState.data)
+  ? Math.max.apply(Math, secondState.data)
+  : Math.max.apply(Math, firstState.data);
+  console.log(max);
+  return max;
+  
 }
 function findMinValueForStateComparison() {
   if (countiesToCompare.length < 2) {
+    console.log(countiesToCompare.length);
     return 0;
   }
   const firstState = dataArray[chosenSector].find(
@@ -264,39 +261,18 @@ function findMinValueForStateComparison() {
   const secondState = dataArray[chosenSector].find(
     (el) => el.county == countiesToCompare[1]
   );
-  return;
-  Math.min.apply(Math, firstState.data) < Math.min.apply(Math, secondState.data)
-    ? Math.min.apply(Math, firstState.data)
-    : Math.min.apply(Math, secondState.data);
+  const min = Math.min.apply(Math, firstState.data) < Math.min.apply(Math, secondState.data)
+  ? Math.min.apply(Math, firstState.data)
+  : Math.min.apply(Math, secondState.data);
+  console.log(min);
+  return min;
+  
 }
 
 function createLineChart() {
-
-
   var countyIndex = activePopulation.findIndex(
     (el) => el.county == chosenCounty
   );
-
-  var x = d3.scale
-    .ordinal()
-    .domain(d3.range(activePopulation[countyIndex].data.length))
-    .rangeRoundBands([0, lineChartWidth]);
-  var y = d3.scale
-    .linear()
-    .domain([
-      findMinValueForStateComparison(),
-      findMaxValueForStateComparison() + 5000,
-    ])
-    .range([lineChartHeight, 0]);
-
-  var xAxis = d3.svg
-    .axis()
-    .scale(x)
-    .orient("bottom")
-    .tickFormat(function (d, i) {
-      return i + 1998;
-    });
-  var yAxis = d3.svg.axis().scale(y).orient("left").ticks(10);
 
   xAxisGroup
     .call(xAxis)
@@ -315,32 +291,81 @@ function createLineChart() {
     .style("text-anchor", "end")
     .text("Vrijednost");
 
-  var valueline = d3.svg
-    .line()
-    .interpolate("linear")
-    .x(function (d, i) {
-      return x(i);
-    })
-    .y(function (d) {
-      return y(d);
-    });
-  var linechart = chartLineSvg
-    .append("path")
-    .attr("class", "line")
-    .attr("d", valueline(activePopulation[countyIndex].data))
-    .attr("fill", "none")
-    .style("stroke", "blue");
-  var linechart = chartLineSvg
-    .append("path")
-    .attr("class", "line")
-    .attr("d", valueline(overallEmployed[countyIndex].data))
-    .attr("fill", "none")
-    .style("stroke", "red");
+ 
 
   let sectorSelector = document.querySelector("#sectorSelector");
   lineChartTitleHolder.text(
     sectorSelector.options[sectorSelector.selectedIndex].text
   );
+}
+
+var xScale = d3.scale
+  .ordinal()
+  .domain(d3.range(activePopulation[0].data.length))
+  .rangeRoundBands([0, lineChartWidth]);
+var yScale = d3.scale
+  .linear()
+  .domain([
+    findMinValueForStateComparison(),
+    findMaxValueForStateComparison(),
+  ])
+  .range([lineChartHeight, 0]);
+
+var xAxis = d3.svg
+  .axis()
+  .scale(xScale)
+  .orient("bottom")
+  .tickFormat(function (d, i) {
+    return i + 1998;
+  });
+var yAxis = d3.svg.axis().scale(yScale).orient("left").ticks(10);
+
+function addLineChartAxes() {
+  yAxisGroup.transition().duration(1500).call(yAxis);
+}
+
+var valueline = d3.svg
+.line()
+.interpolate("linear")
+.x(function (d, i) {
+  return xScale(i);
+})
+.y(function (d) {
+  return yScale(d);
+});
+
+
+function updateLineChart() {
+  d3.selectAll("path.line").remove();
+  if (countiesToCompare.length == 2) {
+    yScale.domain([
+      findMinValueForStateComparison() *0.9,
+      findMaxValueForStateComparison() *1.1,
+    ]);
+
+    var linechart = chartLineSvg
+    .append("path")
+    .attr("class", "line")
+    .attr("d", valueline(returnCountySectorData(0)))
+    .attr("fill", "none")
+    .style("stroke", "blue");
+  var linechart = chartLineSvg
+    .append("path")
+    .attr("class", "line")
+    .attr("d", valueline(returnCountySectorData(1)))
+    .attr("fill", "none")
+    .style("stroke", "red");
+  
+    addLineChartAxes();
+  }
+}
+
+function returnCountySectorData(index) {
+  const stateData = dataArray[chosenSector].find(
+    (el) => el.county == countiesToCompare[index]
+  );
+  console.log(stateData.data);
+  return stateData.data;
 }
 
 function createPieChart() {
@@ -417,6 +442,8 @@ function createPieChart() {
 
 createMap();
 createLineChart();
+
+
 
 function onZoom() {
   let svg = d3.select("g");
